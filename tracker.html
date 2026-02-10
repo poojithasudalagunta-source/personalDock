@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Product Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* ===== Sticky Notes Styles ===== */
+    .note-input {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .note-input input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .notes-board {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .sticky {
+      width: 160px;
+      min-height: 120px;
+      padding: 12px;
+      border-radius: 10px;
+      position: relative;
+      font-size: 14px;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    }
+
+    .sticky.yellow { background: #fff9c4; }
+    .sticky.pink { background: #fce4ec; }
+    .sticky.blue { background: #e3f2fd; }
+
+    .delete-note {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div>
+      <div class="logo">
+        <span class="logo-badge">pd</span>
+        <span class="logo-text">personalDock</span>
+      </div>
+
+      <nav class="menu">
+        <a href="home.html">
+          <img src="assets/overview.png">
+          <span>home</span>
+        </a>
+
+        <a href="library.html">
+          <img src="assets/library.png">
+          <span>Library</span>
+        </a>
+
+        <a href="tracker.html" class="active">
+          <img src="assets/tracker.png">
+          <span>Tracker</span>
+        </a>
+
+        <a href="planner.html">
+          <img src="assets/planner.png">
+          <span>Planner</span>
+        </a>
+
+        <a href="assistant.html">
+          <img src="assets/bot.png">
+          <span>Bot</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="user">
+      <div class="avatar"></div>
+      <div>
+        <strong>User Account</strong><br>
+<small id="userName">Loading...</small>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main content">
+
+    <!-- HEADER -->
+    
+    <!-- STICKY NOTES SECTION -->
+    <section class="card">
+      <h2>📝 Sticky Notes</h2>
+      <p>Personal reminders, skincare tips, or random thoughts.</p>
+
+      <div class="note-input">
+        <input type="text" id="noteText" placeholder="Write a quick note..." />
+        <button class="primary-btn" id="addNoteBtn">Add Note</button>
+      </div>
+
+      <div class="notes-board" id="notesBoard"></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- SCRIPT -->
+<script>
+  const noteText = document.getElementById("noteText");
+  const addNoteBtn = document.getElementById("addNoteBtn");
+  const notesBoard = document.getElementById("notesBoard");
+
+  let notes = JSON.parse(localStorage.getItem("stickyNotes")) || [];
+
+  function renderNotes() {
+    notesBoard.innerHTML = "";
+
+    notes.forEach((note, index) => {
+      const div = document.createElement("div");
+      div.className = `sticky ${note.color}`;
+      div.innerHTML = `
+        <span>${note.text}</span>
+        <button class="delete-note">✖</button>
+      `;
+
+      div.querySelector(".delete-note").onclick = () => {
+        notes.splice(index, 1);
+        localStorage.setItem("stickyNotes", JSON.stringify(notes));
+        renderNotes();
+      };
+
+      notesBoard.appendChild(div);
+    });
+  }
+
+  addNoteBtn.addEventListener("click", () => {
+    if (noteText.value.trim() === "") return;
+
+    const colors = ["yellow", "pink", "blue"];
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+    notes.push({
+      text: noteText.value,
+      color: randomColor
+    });
+
+    localStorage.setItem("stickyNotes", JSON.stringify(notes));
+    noteText.value = "";
+    renderNotes();
+  });
+
+  renderNotes();
+
+  const user = JSON.parse(localStorage.getItem("currentUser"));
+  if (user && user.name) {
+    document.getElementById("userName").innerText = user.name;
+  }
+</script>
+
+</body>
+</html>

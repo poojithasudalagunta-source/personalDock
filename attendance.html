@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Attendance – Routine Tracking</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      <span class="logo-badge">pd</span>
+      <span class="logo-text">personalDock</span>
+    </div>
+
+    <nav class="menu">
+      <a href="planner.html">
+        <span>⬅ Planner</span>
+      </a>
+      <a href="pantry.html">
+        <span>🧴 Pantry</span>
+      </a>
+      <a href="timetable.html">
+        <span>🕒 Timetable</span>
+      </a>
+      <a href="attendance.html" class="active">
+        <span>✅ Attendance</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main content">
+    <div class="header">
+      <div>
+        <h1>✅ Attendance</h1>
+        <p>Track whether you are following your routine.</p>
+      </div>
+    </div>
+
+    <section class="card">
+  <h3>Today's Routine</h3>
+
+  <div id="attendanceList"></div>
+
+  <button class="primary-btn" id="saveAttendanceBtn">
+    Save Attendance
+  </button>
+</section>
+
+  </main>
+</div>
+<script>
+  const attendanceList = document.getElementById("attendanceList");
+  const saveAttendanceBtn = document.getElementById("saveAttendanceBtn");
+
+  // Items come from timetable
+  const routine = JSON.parse(localStorage.getItem("routine")) || {
+    Morning: [],
+    Afternoon: [],
+    Night: []
+  };
+
+  const today = new Date().toISOString().split("T")[0];
+
+  let attendance = JSON.parse(
+    localStorage.getItem("attendance")
+  ) || {};
+
+  function renderAttendance() {
+    attendanceList.innerHTML = "";
+
+    Object.keys(routine).forEach(time => {
+      if (routine[time].length === 0) return;
+
+      const block = document.createElement("div");
+      block.innerHTML = `<h4>${time}</h4>`;
+
+      routine[time].forEach(item => {
+        block.innerHTML += `
+          <label>
+            <input type="checkbox"
+                   class="att-check"
+                   data-time="${time}">
+            ${item}
+          </label><br>
+        `;
+      });
+
+      attendanceList.appendChild(block);
+    });
+  }
+
+  renderAttendance();
+
+  saveAttendanceBtn.addEventListener("click", function () {
+
+    const result = {};
+
+    ["Morning", "Afternoon", "Night"].forEach(time => {
+      const checks = document.querySelectorAll(
+        `.att-check[data-time="${time}"]`
+      );
+
+      result[time] =
+        checks.length > 0 && [...checks].every(cb => cb.checked);
+    });
+
+    attendance[today] = result;
+
+    localStorage.setItem(
+      "attendance",
+      JSON.stringify(attendance)
+    );
+
+    alert("Attendance saved for today ✅");
+  });
+</script>
+</body>
+</html>

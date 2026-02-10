@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Timetable – Skincare Routine</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      <span class="logo-badge">pd</span>
+      <span class="logo-text">personalDock</span>
+    </div>
+
+    <nav class="menu">
+      <a href="planner.html">
+        <span>⬅ Planner</span>
+      </a>
+      <a href="pantry.html">
+        <span>🧴 Pantry</span>
+      </a>
+      <a href="timetable.html" class="active">
+        <span>🕒 Timetable</span>
+      </a>
+      <a href="attendance.html">
+        <span>✅ Attendance</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main content">
+    <div class="header">
+      <div>
+        <h1>🕒 Timetable</h1>
+        <p>Plan when to use your skincare products.</p>
+      </div>
+    </div>
+<!-- ASSIGN PRODUCTS SECTION -->
+<section class="card">
+  <h3>Assign Products to Routine</h3>
+
+  <select id="productSelect">
+    <option>Select Product</option>
+  </select>
+
+  <select id="timeSelect">
+    <option>Morning</option>
+    <option>Afternoon</option>
+    <option>Night</option>
+  </select>
+
+  <button class="primary-btn" id="assignBtn" type="button">
+    Assign
+  </button>
+</section>
+
+<!-- DISPLAY ROUTINE -->
+<section class="card">
+  <h3>My Skincare Routine</h3>
+
+  <p><strong>Morning:</strong></p>
+  <ul id="morningList"></ul>
+
+  <p><strong>Afternoon:</strong></p>
+  <ul id="afternoonList"></ul>
+
+  <p><strong>Night:</strong></p>
+  <ul id="nightList"></ul>
+</section>
+
+  </main>
+</div>
+
+</body>
+<script>
+  /* ===============================
+     ELEMENT REFERENCES
+     =============================== */
+
+  const productSelect = document.getElementById("productSelect");
+  const timeSelect = document.getElementById("timeSelect");
+  const assignBtn = document.getElementById("assignBtn");
+
+  const morningList = document.getElementById("morningList");
+  const afternoonList = document.getElementById("afternoonList");
+  const nightList = document.getElementById("nightList");
+
+  /* ===============================
+     LOAD PRODUCTS FROM PANTRY
+     =============================== */
+
+  const pantryProducts = JSON.parse(
+    localStorage.getItem("pantryProducts")
+  ) || [];
+
+  pantryProducts.forEach((product) => {
+    const option = document.createElement("option");
+    option.value = product.name;
+    option.textContent = product.name + " (" + product.category + ")";
+    productSelect.appendChild(option);
+  });
+
+  /* ===============================
+     LOAD ROUTINE FROM STORAGE
+     =============================== */
+
+  let routine = JSON.parse(
+    localStorage.getItem("routine")
+  ) || {
+    Morning: [],
+    Afternoon: [],
+    Night: []
+  };
+
+  /* ===============================
+     RENDER ROUTINE
+     =============================== */
+
+  function createRoutineItem(time, item) {
+  const li = document.createElement("li");
+
+  li.innerHTML = `
+    ${item}
+    <button class="delete-btn">❌</button>
+  `;
+
+  li.querySelector(".delete-btn").addEventListener("click", function () {
+    routine[time] = routine[time].filter(p => p !== item);
+
+    localStorage.setItem(
+      "routine",
+      JSON.stringify(routine)
+    );
+
+    renderRoutine();
+  });
+
+  return li;
+}
+
+function renderRoutine() {
+  morningList.innerHTML = "";
+  afternoonList.innerHTML = "";
+  nightList.innerHTML = "";
+
+  routine.Morning.forEach(item => {
+    morningList.appendChild(
+      createRoutineItem("Morning", item)
+    );
+  });
+
+  routine.Afternoon.forEach(item => {
+    afternoonList.appendChild(
+      createRoutineItem("Afternoon", item)
+    );
+  });
+
+  routine.Night.forEach(item => {
+    nightList.appendChild(
+      createRoutineItem("Night", item)
+    );
+  });
+}
+
+  renderRoutine();
+
+  /* ===============================
+     ASSIGN BUTTON LOGIC
+     =============================== */
+
+  assignBtn.addEventListener("click", function () {
+
+    const selectedProduct = productSelect.value;
+    const selectedTime = timeSelect.value;
+
+    if (selectedProduct === "Select Product") {
+      alert("Please select a product");
+      return;
+    }
+
+    if (!routine[selectedTime].includes(selectedProduct)) {
+      routine[selectedTime].push(selectedProduct);
+    }
+
+    // SAVE routine
+    localStorage.setItem(
+      "routine",
+      JSON.stringify(routine)
+    );
+
+    renderRoutine();
+  });
+
+  const user = JSON.parse(localStorage.getItem("currentUser"));
+  if (user && user.name) {
+    document.getElementById("userName").innerText = user.name;
+  }
+</script>
+</html>

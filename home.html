@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>personalDock – Overview</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">pd <span>personalDock</span></div>
+    <nav>
+  <a class="active" href="home.html">
+    <img src="assets/overview.png" alt="home" class="menu-icon">
+    home
+  </a>
+
+  <a href="library.html">
+    <img src="assets/library.png" alt="Library" class="menu-icon">
+    Library
+  </a>
+
+  <a href="tracker.html">
+    <img src="assets/tracker.png" alt="Tracker" class="menu-icon">
+    Tracker
+  </a>
+
+  <a href="planner.html">
+    <img src="assets/planner.png" alt="Planner" class="menu-icon">
+    Planner
+  </a>
+
+  <a href="assistant.html">
+    <img src="assets/bot.png" alt="Bot" class="menu-icon">
+    Bot
+  </a>
+</nav>
+    <div class="user">
+      <div class="avatar"></div>
+      <div>
+        <strong>User Account</strong><br>
+<small id="userName">Loading...</small>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="welcome-text">
+  <h1>Welcome Home 🏠</h1>
+  <p>
+    Your personal space to plan routines, track habits, and take care of yourself—
+    at your own pace.
+  </p>
+</div>
+  </main>
+</div>
+<script>
+  const user = JSON.parse(localStorage.getItem("currentUser"));
+  if (user && user.name) {
+    document.getElementById("userName").innerText = user.name;
+  }
+</script>
+</body>
+</html>

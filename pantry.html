@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pantry – Skincare Products</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      <span class="logo-badge">pd</span>
+      <span class="logo-text">personalDock</span>
+    </div>
+
+    <nav class="menu">
+      <a href="planner.html">
+        <span>⬅ Planner</span>
+      </a>
+      <a href="pantry.html" class="active">
+        <span>🧴 Pantry</span>
+      </a>
+      <a href="timetable.html">
+        <span>🕒 Timetable</span>
+      </a>
+      <a href="attendance.html">
+        <span>✅ Attendance</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main content">
+
+    <div class="header">
+      <div>
+        <h1>🧴 Pantry</h1>
+        <p>Manage all skincare products you own.</p>
+      </div>
+    </div>
+
+    <!-- ADD PRODUCT CARD -->
+    <section class="card">
+      <h3>Add Product</h3>
+
+      <input
+        type="text"
+        id="productName"
+        placeholder="Product Name"
+      /><br><br>
+
+      <select id="productCategory">
+        <option>Select Category</option>
+        <option>Cleanser</option>
+        <option>Toner</option>
+        <option>Serum</option>
+        <option>Moisturizer</option>
+        <option>Sunscreen</option>
+      </select><br><br>
+
+      <input
+        type="date"
+        id="expiryDate"
+      /><br><br>
+
+      <button
+        class="primary-btn"
+        id="addProductBtn"
+        type="button"
+      >
+        Add Product
+      </button>
+    </section>
+
+    <!-- PRODUCT LIST CARD -->
+    <section class="card">
+  <h3>Your Products</h3>
+
+  <table class="product-table">
+    <thead>
+      <tr>
+        <th>Product Name</th>
+        <th>Category</th>
+        <th>Expiry Date</th>
+        <th>Usage</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody id="productTableBody"></tbody>
+  </table>
+</section>
+
+  </main>
+</div>
+
+<script>
+  /* ===============================
+     LOAD DATA FROM LOCAL STORAGE
+     =============================== */
+
+  let pantryProducts = JSON.parse(
+    localStorage.getItem("pantryProducts")
+  ) || [];
+
+  /* ===============================
+     ELEMENT REFERENCES
+     =============================== */
+
+  const productNameInput = document.getElementById("productName");
+  const productCategorySelect = document.getElementById("productCategory");
+  const expiryDateInput = document.getElementById("expiryDate");
+  const addProductBtn = document.getElementById("addProductBtn");
+  const productList = document.getElementById("productList");
+
+  /* ===============================
+     DISPLAY STORED PRODUCTS ON LOAD
+     =============================== */
+
+ // 1️⃣ DEFINE renderPantry FIRST (TOP LEVEL)
+ function renderPantry() {
+  const tbody = document.getElementById("productTableBody");
+  tbody.innerHTML = "";
+
+  const today = new Date();
+
+  pantryProducts.forEach((product, index) => {
+    const expiryDate = new Date(product.expiry);
+    const isExpired = expiryDate < today;
+
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${product.name}</td>
+      <td>${product.category}</td>
+      <td>${product.expiry}</td>
+      <td>Daily</td>
+      <td>
+        <span class="status ${isExpired ? "expired" : "active"}">
+          ${isExpired ? "Expired" : "Active"}
+        </span>
+      </td>
+      <td>
+        <button class="delete-btn">🗑</button>
+      </td>
+    `;
+
+    row.querySelector(".delete-btn").addEventListener("click", () => {
+      deleteProduct(index, product.name);
+    });
+
+    tbody.appendChild(row);
+  });
+}
+
+// 2️⃣ CALL IT ON PAGE LOAD
+renderPantry();
+
+
+// 3️⃣ CLICK EVENT (ONLY ADD LOGIC HERE)
+addProductBtn.addEventListener("click", function () {
+
+  const name = productNameInput.value.trim();
+  const category = productCategorySelect.value;
+  const expiry = expiryDateInput.value;
+
+  if (name === "" || category === "Select Category") {
+    alert("Please enter product name and select category");
+    return;
+  }
+
+  const product = { name, category, expiry };
+
+  pantryProducts.push(product);
+
+  localStorage.setItem(
+    "pantryProducts",
+    JSON.stringify(pantryProducts)
+  );
+
+  renderPantry(); // ✅ just call it
+
+  productNameInput.value = "";
+  productCategorySelect.value = "Select Category";
+  expiryDateInput.value = "";
+});
+
+/* ===============================
+   DELETE PRODUCT
+   =============================== */
+
+function deleteProduct(index, productName) {
+  // Remove from pantry array
+  pantryProducts.splice(index, 1);
+
+  // Update localStorage
+  localStorage.setItem(
+    "pantryProducts",
+    JSON.stringify(pantryProducts)
+  );
+
+  // ALSO remove from timetable routine
+  let routine = JSON.parse(localStorage.getItem("routine"));
+
+  if (routine) {
+    ["Morning", "Afternoon", "Night"].forEach(time => {
+      routine[time] = routine[time].filter(
+        item => item !== productName
+      );
+    });
+
+    localStorage.setItem(
+      "routine",
+      JSON.stringify(routine)
+    );
+  }
+
+  renderPantry();
+}
+  /* ===============================
+     ADD PRODUCT LOGIC
+     =============================== */
+
+  addProductBtn.addEventListener("click", function () {
+
+    const name = productNameInput.value.trim();
+    const category = productCategorySelect.value;
+    const expiry = expiryDateInput.value;
+
+    if (name === "" || category === "Select Category") {
+      alert("Please enter product name and select category");
+      return;
+    }
+
+    const product = {
+      name: name,
+      category: category,
+      expiry: expiry
+    };
+
+    // ADD to array
+    pantryProducts.push(product);
+
+    // SAVE to localStorage (CRITICAL LINE)
+    localStorage.setItem(
+      "pantryProducts",
+      JSON.stringify(pantryProducts)
+    );
+
+    // UPDATE UI
+    const li = document.createElement("li");
+    li.innerText =
+      product.name +
+      " – " +
+      product.category +
+      " (Expiry: " +
+      product.expiry +
+      ")";
+    renderPantry();
+
+    // CLEAR inputs
+    productNameInput.value = "";
+    productCategorySelect.value = "Select Category";
+    expiryDateInput.value = "";
+  });
+
+  const user = JSON.parse(localStorage.getItem("currentUser"));
+  if (user && user.name) {
+    document.getElementById("userName").innerText = user.name;
+  }
+</script>
+</body>
+</html>

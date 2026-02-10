@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login | personalDock</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #dbeafe, #fce7f3);
+      font-family: Arial, sans-serif;
+    }
+
+    .auth-box {
+      width: 360px;
+      background: #fff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+
+    .logo {
+      margin-bottom: 15px;
+    }
+
+    .logo-badge {
+      background: #2563eb;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    h2 {
+      margin-bottom: 6px;
+    }
+
+    p {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .switch {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #2563eb;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="auth-box">
+  <div class="logo">
+    <span class="logo-badge">pd</span>
+    <strong> personalDock</strong>
+  </div>
+
+  <h2 id="title">Login</h2>
+  <p id="subtitle">Welcome back 👋</p>
+
+  <input type="text" id="name" placeholder="Your Name" />
+<input type="text" id="username" placeholder="Username" />
+<input type="password" id="password" placeholder="Password" />
+
+  <button class="primary-btn" id="authBtn">Login</button>
+
+  <div class="switch" id="switchMode">
+    Don’t have an account? Sign up
+  </div>
+</div>
+
+<script>
+  const title = document.getElementById("title");
+  const subtitle = document.getElementById("subtitle");
+  const authBtn = document.getElementById("authBtn");
+  const switchMode = document.getElementById("switchMode");
+
+  const usernameInput = document.getElementById("username");
+  const passwordInput = document.getElementById("password");
+
+  let isLogin = true;
+
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+
+  switchMode.onclick = () => {
+    isLogin = !isLogin;
+
+    title.innerText = isLogin ? "Login" : "Sign Up";
+    subtitle.innerText = isLogin
+      ? "Welcome back 👋"
+      : "Create your personalDock account";
+
+    authBtn.innerText = isLogin ? "Login" : "Sign Up";
+
+    switchMode.innerText = isLogin
+      ? "Don’t have an account? Sign up"
+      : "Already have an account? Login";
+  };
+
+  authBtn.onclick = () => {
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    if (!username || !password) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    if (isLogin) {
+      const user = users.find(
+        u => u.username === username && u.password === password
+      );
+
+      if (!user) {
+        alert("Invalid credentials ❌");
+        return;
+      }
+
+      localStorage.setItem("currentUser", JSON.stringify(user));
+      window.location.href = "home.html";
+    } 
+    else {
+      const exists = users.find(u => u.username === username);
+
+      if (exists) {
+        alert("User already exists ❌");
+        return;
+      }
+
+      const name = document.getElementById("name").value.trim();
+
+users.push({ name, username, password });
+      localStorage.setItem("users", JSON.stringify(users));
+      alert("Signup successful ✅ Now login");
+      switchMode.onclick();
+    }
+
+    usernameInput.value = "";
+    passwordInput.value = "";
+  };
+</script>
+
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Digital Library</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      <span class="logo-badge">pd</span>
+      <span class="logo-text">personalDock</span>
+    </div>
+
+    <nav class="menu">
+  <a href="home.html">
+    <img src="assets/overview.png" alt="home">
+    <span>home</span>
+  </a>
+
+  <a href="library.html"  class="active">
+    <img src="assets/library.png" alt="Library">
+    <span>Library</span>
+  </a>
+
+  <a href="tracker.html">
+    <img src="assets/tracker.png" alt="Tracker">
+    <span>Tracker</span>
+  </a>
+
+  <a href="planner.html">
+    <img src="assets/planner.png" alt="Planner">
+    <span>Planner</span>
+  </a>
+
+  <a href="assistant.html">
+    <img src="assets/bot.png" alt="Bot">
+    <span>Bot</span>
+  </a>
+</nav>
+    <div class="user">
+       <div class="avatar">  </div>   
+       <div>
+        <strong>User Account</strong><br>
+<small id="userName">Loading...</small>
+      </div>
+
+      
+</div>
+
+
+</aside>
+<main class="main content">
+<header class="header">
+<div>
+<h1>Digital Library</h1>
+<p>Manage your collection of PDFs and documents.</p>
+</div>
+<button class="primary-btn" id="addDocBtn">+ Add Document</button>
+      <input type="file" id="pdfUpload" accept="application/pdf" hidden />
+</header>
+<div class="search-box">
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="Search documents by name..."
+  />
+</div>
+
+<section class="grid" id="libraryGrid">
+
+  <!-- Existing cards stay as they are -->
+
+</section>
+
+
+</main>
+
+</div>
+
+<script>
+  /* ===============================
+     ELEMENT REFERENCES
+     =============================== */
+
+  const addDocBtn = document.getElementById("addDocBtn");
+  const pdfUpload = document.getElementById("pdfUpload");
+  const libraryGrid = document.getElementById("libraryGrid");
+  const searchInput = document.getElementById("searchInput");
+
+  /* ===============================
+     DATA STORAGE (OBJECTS)
+     =============================== */
+
+  const documents = [];   // stores uploaded document objects
+
+  /* ===============================
+     OPEN FILE PICKER
+     =============================== */
+
+  addDocBtn.addEventListener("click", function () {
+    pdfUpload.click();
+  });
+
+  /* ===============================
+     HANDLE PDF UPLOAD
+     =============================== */
+
+  pdfUpload.addEventListener("change", function () {
+    const file = pdfUpload.files[0];
+    if (!file) return;
+
+    const fileURL = URL.createObjectURL(file);
+
+    // create document object
+    const documentObj = {
+      name: file.name,
+      size: (file.size / 1024 / 1024).toFixed(2) + " MB",
+      url: fileURL
+    };
+
+    documents.push(documentObj);
+    displayDocument(documentObj);
+
+    pdfUpload.value = "";
+  });
+
+  /* ===============================
+     DISPLAY DOCUMENT CARD
+     =============================== */
+
+  function displayDocument(doc) {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <span class="tag">Personal</span>
+      <div class="file-icon"></div>
+      <h3>${doc.name}</h3>
+      <p>Uploaded PDF</p>
+      <div class="card-footer">
+        <span>PDF • ${doc.size}</span>
+        <a href="${doc.url}" target="_blank">View</a>
+      </div>
+    `;
+
+    libraryGrid.appendChild(card);
+  }
+
+  /* ===============================
+     SEARCH FUNCTIONALITY
+     =============================== */
+
+  searchInput.addEventListener("keyup", function () {
+    const searchText = searchInput.value.toLowerCase();
+    const cards = libraryGrid.getElementsByClassName("card");
+
+    for (let i = 0; i < cards.length; i++) {
+      const title = cards[i]
+        .getElementsByTagName("h3")[0]
+        .innerText.toLowerCase();
+
+      if (title.indexOf(searchText) !== -1) {
+        cards[i].style.display = "block";
+      } else {
+        cards[i].style.display = "none";
+      }
+    }
+  });
+  const user = JSON.parse(localStorage.getItem("currentUser"));
+  if (user && user.name) {
+    document.getElementById("userName").innerText = user.name;
+  }
+
+</script>
+
+
+</body>
+</html>
