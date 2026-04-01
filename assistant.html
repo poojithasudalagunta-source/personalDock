@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Personal Assistant</title>
@@ -10,7 +11,7 @@
       background: #fff;
       border-radius: 12px;
       padding: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
       margin-top: 20px;
     }
 
@@ -20,9 +21,19 @@
       margin-bottom: 15px;
     }
 
-    .msg { margin-bottom: 10px; }
-    .user { text-align: right; font-weight: 500; }
-    .bot { text-align: left; color: #2563eb; }
+    .msg {
+      margin-bottom: 10px;
+    }
+
+    .user {
+      text-align: right;
+      font-weight: 500;
+    }
+
+    .bot {
+      text-align: left;
+      color: #2563eb;
+    }
 
     .input-area {
       display: flex;
@@ -68,185 +79,278 @@
 
 <body>
 
-<div class="app">
+  <div class="app">
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="logo">
-      <span class="logo-badge">pd</span>
-      <span class="logo-text">personalDock</span>
-    </div>
-
-    <nav class="menu">
-      <a href="index.html">
-        <img src="assets/overview.png" alt="home">
-        <span>home</span>
-      </a>
-
-      <a href="library.html">
-        <img src="assets/library.png" alt="Library">
-        <span>Library</span>
-      </a>
-
-      <a href="tracker.html">
-        <img src="assets/tracker.png" alt="Tracker">
-        <span>Tracker</span>
-      </a>
-
-      <a href="planner.html">
-        <img src="assets/planner.png" alt="Planner">
-        <span>Planner</span>
-      </a>
-
-      <a href="assistant.html" class="active">
-        <img src="assets/bot.png" alt="Bot">
-        <span>Bot</span>
-      </a>
-    </nav>
-
-    <div class="user">
-      <div class="avatar"></div>
-      <div>
-        <strong>User Account</strong><br>
-        <small>user@example.com</small>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="logo">
+        <span class="logo-badge">pd</span>
+        <span class="logo-text">personalDock</span>
       </div>
-    </div>
-  </aside>
 
+      <nav class="menu">
+        <a href="index.html">
+          <img src="assets/overview.png" alt="home">
+          <span>home</span>
+        </a>
 
-  <!-- MAIN -->
-  <main class="main content">
+        <a href="library.html">
+          <img src="assets/library.png" alt="Library">
+          <span>Library</span>
+        </a>
 
-    <div class="header">
-      <h1>🤖 Personal Assistant</h1>
-      <p>Upload info, view it when needed, and ask questions.</p>
-    </div>
+        <a href="tracker.html">
+          <img src="assets/tracker.png" alt="Tracker">
+          <span>Tracker</span>
+        </a>
 
-    <!-- BUTTONS -->
-    <div class="mode-buttons">
-      <button class="primary-btn" id="uploadBtn">Upload Info</button>
-      <button class="primary-btn" id="viewInfoBtn">View Info</button>
-      <button class="primary-btn" id="closeInfoBtn" style="display:none;">Close Info</button>
-    </div>
+        <a href="planner.html">
+          <img src="assets/planner.png" alt="Planner">
+          <span>Planner</span>
+        </a>
 
-    <!-- UPLOAD INFO -->
-    <div class="upload-box" id="uploadBox">
-      <textarea id="infoText" rows="4" placeholder="Paste information here..."></textarea><br><br>
-      <button class="primary-btn" id="saveInfoBtn">Save Info</button>
-    </div>
+        <a href="assistant.html" class="active">
+          <img src="assets/bot.png" alt="Bot">
+          <span>Bot</span>
+        </a>
+      </nav>
 
-    <!-- VIEW INFO PANEL -->
-    <section class="card knowledge-panel" id="knowledgePanel">
-      <h3>📚 Stored Information</h3>
-      <div id="knowledgeList"></div>
-    </section>
-
-    <!-- CHAT -->
-    <div class="chat-box">
-      <div class="messages" id="messages"></div>
-
-      <div class="input-area">
-        <input type="text" id="userInput" placeholder="Ask a question..." />
-        <button class="primary-btn" id="sendBtn">Send</button>
+      <div class="user">
+        <div class="avatar"></div>
+        <div>
+          <strong>User Account</strong><br>
+          <small>user@example.com</small>
+        </div>
       </div>
-    </div>
+    </aside>
 
-  </main>
-</div>
 
-<script>
-  const uploadBtn = document.getElementById("uploadBtn");
-  const viewInfoBtn = document.getElementById("viewInfoBtn");
-  const closeInfoBtn = document.getElementById("closeInfoBtn");
+    <!-- MAIN -->
+    <main class="main content">
 
-  const uploadBox = document.getElementById("uploadBox");
-  const infoText = document.getElementById("infoText");
-  const saveInfoBtn = document.getElementById("saveInfoBtn");
+      <div class="header">
+        <h1>🤖 Personal Assistant</h1>
+        <p>Upload info, view it when needed, and ask questions.</p>
+      </div>
 
-  const knowledgePanel = document.getElementById("knowledgePanel");
-  const knowledgeList = document.getElementById("knowledgeList");
+      <!-- BUTTONS -->
+      <div class="mode-buttons">
+        <button class="primary-btn" id="uploadBtn">Upload Info</button>
+        <button class="primary-btn" id="viewInfoBtn">View Info</button>
+        <button class="primary-btn" id="closeInfoBtn" style="display:none;">Close Info</button>
+      </div>
 
-  const messages = document.getElementById("messages");
-  const userInput = document.getElementById("userInput");
-  const sendBtn = document.getElementById("sendBtn");
+      <!-- UPLOAD INFO -->
+      <div class="upload-box" id="uploadBox">
+        <textarea id="infoText" rows="4" placeholder="Paste information here..."></textarea><br><br>
+        <button class="primary-btn" id="saveInfoBtn">Save Info</button>
+      </div>
 
-  let knowledgeBase = JSON.parse(localStorage.getItem("knowledgeBase")) || [];
+      <!-- VIEW INFO PANEL -->
+      <section class="card knowledge-panel" id="knowledgePanel">
+        <h3>📚 Stored Information</h3>
+        <div id="knowledgeList"></div>
+      </section>
 
-  function addMessage(text, type) {
-    const div = document.createElement("div");
-    div.className = `msg ${type}`;
-    div.innerText = text;
-    messages.appendChild(div);
-    messages.scrollTop = messages.scrollHeight;
-  }
+      <!-- CHAT -->
+      <div class="chat-box">
+        <div class="messages" id="messages"></div>
 
-  function renderKnowledge() {
-    knowledgeList.innerHTML = "";
-    knowledgeBase.forEach((info, index) => {
-      const div = document.createElement("div");
-      div.className = "knowledge-item";
-      div.innerHTML = `
-        <p>${info}</p>
-        <button class="primary-btn">✏ Edit</button>
-        <button class="primary-btn">🗑 Delete</button>
-      `;
+        <div class="input-area">
+          <input type="text" id="userInput" placeholder="Ask a question..." />
+          <button class="primary-btn" id="sendBtn">Send</button>
+        </div>
+      </div>
 
-      div.querySelectorAll("button")[0].onclick = () => {
-        const updated = prompt("Edit info:", info);
-        if (updated) {
-          knowledgeBase[index] = updated;
-          localStorage.setItem("knowledgeBase", JSON.stringify(knowledgeBase));
+    </main>
+  </div>
+
+  <script>
+    const uploadBtn = document.getElementById("uploadBtn");
+    const viewInfoBtn = document.getElementById("viewInfoBtn");
+    const closeInfoBtn = document.getElementById("closeInfoBtn");
+
+    const uploadBox = document.getElementById("uploadBox");
+    const infoText = document.getElementById("infoText");
+    const saveInfoBtn = document.getElementById("saveInfoBtn");
+
+    const knowledgePanel = document.getElementById("knowledgePanel");
+    const knowledgeList = document.getElementById("knowledgeList");
+
+    const messages = document.getElementById("messages");
+    const userInput = document.getElementById("userInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    let knowledgeBase = [];
+
+    /* ===============================
+       LOAD KNOWLEDGE FROM DATABASE
+    ================================ */
+
+    function loadKnowledge() {
+      fetch(`http://localhost:5000/knowledge?userId=${user._id}`)
+        .then(res => res.json())
+        .then(data => {
+          console.log("Knowledge loaded:", data);
+          knowledgeBase = data;
           renderKnowledge();
-        }
-      };
+        });
+    }
 
-      div.querySelectorAll("button")[1].onclick = () => {
-        knowledgeBase.splice(index, 1);
-        localStorage.setItem("knowledgeBase", JSON.stringify(knowledgeBase));
-        renderKnowledge();
-      };
+    loadKnowledge();
 
-      knowledgeList.appendChild(div);
-    });
-  }
+    /* ===============================
+       CHAT MESSAGE
+    ================================ */
+    if (user && user.name) {
+  document.querySelector(".user small").innerText = user.name;
+}
 
-  uploadBtn.onclick = () => {
-    uploadBox.style.display = "block";
-  };
+    function addMessage(text, type) {
+      const div = document.createElement("div");
+      div.className = `msg ${type}`;
+      div.innerText = text;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
 
-  viewInfoBtn.onclick = () => {
-    knowledgePanel.style.display = "block";
-    closeInfoBtn.style.display = "inline-block";
-    renderKnowledge();
-  };
+    /* ===============================
+       DISPLAY KNOWLEDGE
+    ================================ */
 
-  closeInfoBtn.onclick = () => {
-    knowledgePanel.style.display = "none";
-    closeInfoBtn.style.display = "none";
-  };
+    function renderKnowledge() {
 
-  saveInfoBtn.onclick = () => {
-    if (!infoText.value.trim()) return;
-    knowledgeBase.push(infoText.value.trim());
-    localStorage.setItem("knowledgeBase", JSON.stringify(knowledgeBase));
-    infoText.value = "";
-    addMessage("✅ Info saved", "bot");
-  };
+      knowledgeList.innerHTML = "";
 
-  sendBtn.onclick = () => {
-    const q = userInput.value.trim();
-    if (!q) return;
+      knowledgeBase.forEach(info => {
 
-    addMessage(q, "user");
+        const div = document.createElement("div");
+        div.className = "knowledge-item";
 
-    const answer = knowledgeBase.find(info =>
-      info.toLowerCase().includes(q.toLowerCase().split(" ")[0])
-    );
+        div.innerHTML = `
+      <p>${info.text}</p>
+      <button class="primary-btn edit">✏ Edit</button>
+      <button class="primary-btn delete">🗑 Delete</button>
+    `;
 
-    addMessage(answer || "Info not yet received ❌", "bot");
-    userInput.value = "";
-  };
-</script>
+        /* EDIT */
+
+        div.querySelector(".edit").onclick = () => {
+
+          const updated = prompt("Edit info:", info.text);
+
+          if (!updated) return;
+
+          fetch("http://localhost:5000/knowledge/edit", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              id: info._id,
+              text: updated,
+              userId: user._id
+            })
+          })
+            .then(() => loadKnowledge());
+
+        };
+
+        /* DELETE */
+
+        div.querySelector(".delete").onclick = () => {
+
+          fetch("http://localhost:5000/knowledge/delete", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              id: info._id,
+  userId: user._id
+            })
+          })
+            .then(() => loadKnowledge());
+
+        };
+
+        knowledgeList.appendChild(div);
+
+      });
+
+    }
+
+    /* ===============================
+       BUTTON CONTROLS
+    ================================ */
+
+    uploadBtn.onclick = () => {
+      uploadBox.style.display = "block";
+    };
+
+    viewInfoBtn.onclick = () => {
+      knowledgePanel.style.display = "block";
+      closeInfoBtn.style.display = "inline-block";
+    };
+
+    closeInfoBtn.onclick = () => {
+      knowledgePanel.style.display = "none";
+      closeInfoBtn.style.display = "none";
+    };
+
+    /* ===============================
+       SAVE NEW KNOWLEDGE
+    ================================ */
+
+    saveInfoBtn.onclick = () => {
+
+      if (!infoText.value.trim()) return;
+
+      fetch("http://localhost:5000/knowledge", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+  text: infoText.value.trim(),
+  userId: user._id   // ⭐ ADD
+})
+      })
+        .then(() => {
+
+          infoText.value = "";
+          addMessage("✅ Info saved", "bot");
+          loadKnowledge();
+
+        });
+
+    };
+
+    /* ===============================
+       CHAT QUESTION
+    ================================ */
+
+    sendBtn.onclick = () => {
+
+      const q = userInput.value.trim();
+
+      if (!q) return;
+
+      addMessage(q, "user");
+
+      const answer = knowledgeBase.find(info =>
+        info.text.toLowerCase().includes(
+          q.toLowerCase().split(" ")[0]
+        )
+      );
+
+      addMessage(answer ? answer.text : "Info not yet received ❌", "bot");
+
+      userInput.value = "";
+
+    };
+  </script>
 
 </body>
+
 </html>

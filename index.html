@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Login | personalDock</title>
@@ -21,7 +22,7 @@
       background: #fff;
       padding: 30px;
       border-radius: 16px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
       text-align: center;
     }
 
@@ -71,96 +72,143 @@
 
 <body>
 
-<div class="auth-box">
-  <div class="logo">
-    <span class="logo-badge">pd</span>
-    <strong> personalDock</strong>
+  <div class="auth-box">
+    <div class="logo">
+      <span class="logo-badge">pd</span>
+      <strong> personalDock</strong>
+    </div>
+
+    <h2 id="title">Login</h2>
+    <p id="subtitle">Welcome back 👋</p>
+
+    <input type="text" id="name" placeholder="Your Name" />
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+
+    <button class="primary-btn" id="authBtn">Login</button>
+
+    <div class="switch" id="switchMode">
+      Don’t have an account? Sign up
+    </div>
   </div>
 
-  <h2 id="title">Login</h2>
-  <p id="subtitle">Welcome back 👋</p>
+  <script>
 
-  <input type="text" id="name" placeholder="Your Name" />
-<input type="text" id="username" placeholder="Username" />
-<input type="password" id="password" placeholder="Password" />
+    const title = document.getElementById("title");
+    const subtitle = document.getElementById("subtitle");
+    const authBtn = document.getElementById("authBtn");
+    const switchMode = document.getElementById("switchMode");
 
-  <button class="primary-btn" id="authBtn">Login</button>
+    const nameInput = document.getElementById("name");
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
 
-  <div class="switch" id="switchMode">
-    Don’t have an account? Sign up
-  </div>
-</div>
+    let isLogin = true;
 
-<script>
-  const title = document.getElementById("title");
-  const subtitle = document.getElementById("subtitle");
-  const authBtn = document.getElementById("authBtn");
-  const switchMode = document.getElementById("switchMode");
+    /* ===============================
+       SWITCH LOGIN / SIGNUP
+    ================================ */
 
-  const usernameInput = document.getElementById("username");
-  const passwordInput = document.getElementById("password");
+    switchMode.onclick = () => {
 
-  let isLogin = true;
+  isLogin = !isLogin;
 
-  let users = JSON.parse(localStorage.getItem("users")) || [];
+  console.log("Mode switched:", isLogin ? "Login" : "Signup");
 
-  switchMode.onclick = () => {
-    isLogin = !isLogin;
+  if (isLogin) {
+    title.innerText = "Login";
+    subtitle.innerText = "Welcome back 👋";
+    authBtn.innerText = "Login";
+    switchMode.innerText = "Don’t have an account? Sign up";
+  } else {
+    title.innerText = "Sign Up";
+    subtitle.innerText = "Create your personalDock account";
+    authBtn.innerText = "Sign Up";
+    switchMode.innerText = "Already have an account? Login";
+  }
 
-    title.innerText = isLogin ? "Login" : "Sign Up";
-    subtitle.innerText = isLogin
-      ? "Welcome back 👋"
-      : "Create your personalDock account";
+};
 
-    authBtn.innerText = isLogin ? "Login" : "Sign Up";
 
-    switchMode.innerText = isLogin
-      ? "Don’t have an account? Sign up"
-      : "Already have an account? Login";
-  };
+    /* ===============================
+       AUTH BUTTON
+    ================================ */
 
-  authBtn.onclick = () => {
-    const username = usernameInput.value.trim();
-    const password = passwordInput.value.trim();
+    authBtn.onclick = () => {
 
-    if (!username || !password) {
-      alert("Please fill all fields");
-      return;
-    }
+  console.log("isLogin:", isLogin);
 
-    if (isLogin) {
-      const user = users.find(
-        u => u.username === username && u.password === password
-      );
+  if (isLogin === true) {
 
-      if (!user) {
+    // LOGIN
+    fetch("http://localhost:5000/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        username: usernameInput.value,
+        password: passwordInput.value
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+      console.log("LOGIN RESPONSE:", data);
+
+      if (!data.success) {
         alert("Invalid credentials ❌");
         return;
       }
 
-      localStorage.setItem("currentUser", JSON.stringify(user));
+      localStorage.setItem("currentUser", JSON.stringify(data.user));
       window.location.href = "home.html";
-    } 
-    else {
-      const exists = users.find(u => u.username === username);
 
-      if (exists) {
+    })
+    .catch(err => {
+      console.error("LOGIN ERROR:", err);
+    });
+
+  } else {
+
+    // SIGNUP
+    fetch("http://localhost:5000/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: nameInput.value,
+        username: usernameInput.value,
+        password: passwordInput.value
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+      console.log("SIGNUP RESPONSE:", data);
+
+      if (!data.success) {
         alert("User already exists ❌");
         return;
       }
 
-      const name = document.getElementById("name").value.trim();
+      alert("Signup successful ✅ Please login");
 
-users.push({ name, username, password });
-      localStorage.setItem("users", JSON.stringify(users));
-      alert("Signup successful ✅ Now login");
-      switchMode.onclick();
-    }
+      localStorage.removeItem("currentUser");
 
-    usernameInput.value = "";
-    passwordInput.value = "";
-  };
-</script>
+    });
 
+  }
+
+};
+      /* ===============================
+         LOGIN
+      ================================ */
+
+
+
+  </script>
 </body>
+
 </html>

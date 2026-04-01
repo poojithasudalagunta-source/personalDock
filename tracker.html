@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Product Tracker</title>
@@ -33,12 +34,20 @@
       border-radius: 10px;
       position: relative;
       font-size: 14px;
-      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
     }
 
-    .sticky.yellow { background: #fff9c4; }
-    .sticky.pink { background: #fce4ec; }
-    .sticky.blue { background: #e3f2fd; }
+    .sticky.yellow {
+      background: #fff9c4;
+    }
+
+    .sticky.pink {
+      background: #fce4ec;
+    }
+
+    .sticky.blue {
+      background: #e3f2fd;
+    }
 
     .delete-note {
       position: absolute;
@@ -54,126 +63,186 @@
 
 <body>
 
-<div class="app">
+  <div class="app">
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div>
-      <div class="logo">
-        <span class="logo-badge">pd</span>
-        <span class="logo-text">personalDock</span>
-      </div>
-
-      <nav class="menu">
-        <a href="home.html">
-          <img src="assets/overview.png">
-          <span>home</span>
-        </a>
-
-        <a href="library.html">
-          <img src="assets/library.png">
-          <span>Library</span>
-        </a>
-
-        <a href="tracker.html" class="active">
-          <img src="assets/tracker.png">
-          <span>Tracker</span>
-        </a>
-
-        <a href="planner.html">
-          <img src="assets/planner.png">
-          <span>Planner</span>
-        </a>
-
-        <a href="assistant.html">
-          <img src="assets/bot.png">
-          <span>Bot</span>
-        </a>
-      </nav>
-    </div>
-
-    <div class="user">
-      <div class="avatar"></div>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
       <div>
-        <strong>User Account</strong><br>
-<small id="userName">Loading...</small>
+        <div class="logo">
+          <span class="logo-badge">pd</span>
+          <span class="logo-text">personalDock</span>
+        </div>
+
+        <nav class="menu">
+          <a href="home.html">
+            <img src="assets/overview.png">
+            <span>home</span>
+          </a>
+
+          <a href="library.html">
+            <img src="assets/library.png">
+            <span>Library</span>
+          </a>
+
+          <a href="tracker.html" class="active">
+            <img src="assets/tracker.png">
+            <span>Tracker</span>
+          </a>
+
+          <a href="planner.html">
+            <img src="assets/planner.png">
+            <span>Planner</span>
+          </a>
+
+          <a href="assistant.html">
+            <img src="assets/bot.png">
+            <span>Bot</span>
+          </a>
+        </nav>
       </div>
-    </div>
-  </aside>
 
-  <!-- MAIN -->
-  <main class="main content">
-
-    <!-- HEADER -->
-    
-    <!-- STICKY NOTES SECTION -->
-    <section class="card">
-      <h2>📝 Sticky Notes</h2>
-      <p>Personal reminders, skincare tips, or random thoughts.</p>
-
-      <div class="note-input">
-        <input type="text" id="noteText" placeholder="Write a quick note..." />
-        <button class="primary-btn" id="addNoteBtn">Add Note</button>
+      <div class="user">
+        <div class="avatar"></div>
+        <div>
+          <strong>User Account</strong><br>
+          <small id="userName">Loading...</small>
+        </div>
       </div>
+    </aside>
 
-      <div class="notes-board" id="notesBoard"></div>
-    </section>
+    <!-- MAIN -->
+    <main class="main content">
 
-  </main>
-</div>
+      <!-- HEADER -->
 
-<!-- SCRIPT -->
-<script>
-  const noteText = document.getElementById("noteText");
-  const addNoteBtn = document.getElementById("addNoteBtn");
-  const notesBoard = document.getElementById("notesBoard");
+      <!-- STICKY NOTES SECTION -->
+      <section class="card">
+        <h2>📝 Sticky Notes</h2>
+        <p>Personal reminders, skincare tips, or random thoughts.</p>
 
-  let notes = JSON.parse(localStorage.getItem("stickyNotes")) || [];
+        <div class="note-input">
+          <input type="text" id="noteText" placeholder="Write a quick note..." />
+          <button class="primary-btn" id="addNoteBtn">Add Note</button>
+        </div>
 
-  function renderNotes() {
-    notesBoard.innerHTML = "";
+        <div class="notes-board" id="notesBoard"></div>
+      </section>
 
-    notes.forEach((note, index) => {
-      const div = document.createElement("div");
-      div.className = `sticky ${note.color}`;
-      div.innerHTML = `
-        <span>${note.text}</span>
-        <button class="delete-note">✖</button>
-      `;
+    </main>
+  </div>
 
-      div.querySelector(".delete-note").onclick = () => {
-        notes.splice(index, 1);
-        localStorage.setItem("stickyNotes", JSON.stringify(notes));
-        renderNotes();
+  <!-- SCRIPT -->
+  <script>
+
+    const noteText = document.getElementById("noteText");
+    const addNoteBtn = document.getElementById("addNoteBtn");
+    const notesBoard = document.getElementById("notesBoard");
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    let notes = [];
+
+    /* ===============================
+       LOAD NOTES FROM DATABASE
+    ================================ */
+
+    function loadNotes() {
+
+        fetch(`http://localhost:5000/notes?userId=${user._id}`)
+        .then(res => res.json())
+        .then(data => {
+          notes = data;
+          renderNotes();
+        });
+
+    }
+
+    loadNotes();
+
+    /* ===============================
+       RENDER NOTES
+    ================================ */
+
+    function renderNotes() {
+
+      notesBoard.innerHTML = "";
+
+      notes.forEach((note, index) => {
+
+        const div = document.createElement("div");
+
+        div.className = `sticky ${note.color}`;
+
+        div.innerHTML = `
+      <span>${note.text}</span>
+      <button class="delete-note">✖</button>
+    `;
+
+        div.querySelector(".delete-note").onclick = () => {
+
+          fetch("http://localhost:5000/notes/delete", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              id: note._id,
+              userId: user._id 
+            })
+          })
+            .then(() => loadNotes());
+
+        };
+
+        notesBoard.appendChild(div);
+
+      });
+
+    }
+
+    /* ===============================
+       ADD NOTE
+    ================================ */
+
+    addNoteBtn.addEventListener("click", () => {
+
+      if (noteText.value.trim() === "") return;
+
+      const colors = ["yellow", "pink", "blue"];
+
+      const randomColor =
+        colors[Math.floor(Math.random() * colors.length)];
+
+      const newNote = {
+        text: noteText.value,
+        color: randomColor,
+        userId: user._id
       };
 
-      notesBoard.appendChild(div);
+      fetch("http://localhost:5000/notes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(newNote)
+      })
+        .then(res => res.json())
+        .then(data => {
+          noteText.value = "";
+          loadNotes();
+        });
+
     });
-  }
 
-  addNoteBtn.addEventListener("click", () => {
-    if (noteText.value.trim() === "") return;
+    /* ===============================
+       LOAD USER
+    ================================ */
 
-    const colors = ["yellow", "pink", "blue"];
-    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    
+    if (user && user.name) {
+      document.getElementById("userName").innerText = user.name;
+    }
 
-    notes.push({
-      text: noteText.value,
-      color: randomColor
-    });
-
-    localStorage.setItem("stickyNotes", JSON.stringify(notes));
-    noteText.value = "";
-    renderNotes();
-  });
-
-  renderNotes();
-
-  const user = JSON.parse(localStorage.getItem("currentUser"));
-  if (user && user.name) {
-    document.getElementById("userName").innerText = user.name;
-  }
-</script>
+  </script>
 
 </body>
+
 </html>

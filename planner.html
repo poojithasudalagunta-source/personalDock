@@ -107,6 +107,12 @@
 
   </main>
 </div>
+<script>
+  const user = JSON.parse(localStorage.getItem("currentUser"));
 
+if (user && user.name) {
+  document.getElementById("userName").innerText = user.name;
+}
+</script>
 </body>
 </html>

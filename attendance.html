@@ -1,123 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Attendance – Routine Tracking</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
-<div class="app">
+  <div class="app">
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="logo">
-      <span class="logo-badge">pd</span>
-      <span class="logo-text">personalDock</span>
-    </div>
-
-    <nav class="menu">
-      <a href="planner.html">
-        <span>⬅ Planner</span>
-      </a>
-      <a href="pantry.html">
-        <span>🧴 Pantry</span>
-      </a>
-      <a href="timetable.html">
-        <span>🕒 Timetable</span>
-      </a>
-      <a href="attendance.html" class="active">
-        <span>✅ Attendance</span>
-      </a>
-    </nav>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="main content">
-    <div class="header">
-      <div>
-        <h1>✅ Attendance</h1>
-        <p>Track whether you are following your routine.</p>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="logo">
+        <span class="logo-badge">pd</span>
+        <span class="logo-text">personalDock</span>
       </div>
-    </div>
 
-    <section class="card">
-  <h3>Today's Routine</h3>
+      <nav class="menu">
+        <a href="planner.html">
+          <span>⬅ Planner</span>
+        </a>
+        <a href="pantry.html">
+          <span>🧴 Pantry</span>
+        </a>
+        <a href="timetable.html">
+          <span>🕒 Timetable</span>
+        </a>
+        <a href="attendance.html" class="active">
+          <span>✅ Attendance</span>
+        </a>
+      </nav>
+    </aside>
 
-  <div id="attendanceList"></div>
+    <!-- MAIN -->
+    <main class="main content">
+      <div class="header">
+        <div>
+          <h1>✅ Attendance</h1>
+          <p>Track whether you are following your routine.</p>
+        </div>
+      </div>
 
-  <button class="primary-btn" id="saveAttendanceBtn">
-    Save Attendance
-  </button>
-</section>
+      <section class="card">
+        <h3>Today's Routine</h3>
 
-  </main>
-</div>
-<script>
-  const attendanceList = document.getElementById("attendanceList");
-  const saveAttendanceBtn = document.getElementById("saveAttendanceBtn");
+        <div id="attendanceList"></div>
 
-  // Items come from timetable
-  const routine = JSON.parse(localStorage.getItem("routine")) || {
-    Morning: [],
-    Afternoon: [],
-    Night: []
-  };
+        <button class="primary-btn" id="saveAttendanceBtn">
+          Save Attendance
+        </button>
+      </section>
 
-  const today = new Date().toISOString().split("T")[0];
+    </main>
+  </div>
+  <script>
 
-  let attendance = JSON.parse(
-    localStorage.getItem("attendance")
-  ) || {};
+const attendanceList = document.getElementById("attendanceList");
+const saveAttendanceBtn = document.getElementById("saveAttendanceBtn");
 
-  function renderAttendance() {
-    attendanceList.innerHTML = "";
+const user = JSON.parse(localStorage.getItem("currentUser"));
 
-    Object.keys(routine).forEach(time => {
-      if (routine[time].length === 0) return;
+if (!user) {
+  alert("Please login first");
+  window.location.href = "index.html";
+}
 
-      const block = document.createElement("div");
-      block.innerHTML = `<h4>${time}</h4>`;
+const today = new Date().toISOString().split("T")[0];
 
-      routine[time].forEach(item => {
-        block.innerHTML += `
-          <label>
-            <input type="checkbox"
-                   class="att-check"
-                   data-time="${time}">
-            ${item}
-          </label><br>
-        `;
+let routine = {
+  Morning: [],
+  Afternoon: [],
+  Night: []
+};
+
+/* ===============================
+   STEP 1 — LOAD ROUTINE FROM PLANNER
+================================ */
+
+fetch(`http://localhost:5000/planner?userId=${user._id}`)
+  .then(res => res.json())
+  .then(data => {
+
+    data.forEach(item => {
+      routine[item.time].push(item.product);
+    });
+
+    renderAttendance();   // ⭐ render first
+
+    loadSavedAttendance(); // ⭐ then restore
+
+  });
+
+/* ===============================
+   STEP 2 — RENDER CHECKBOXES
+================================ */
+
+function renderAttendance() {
+
+  attendanceList.innerHTML = "";
+
+  Object.keys(routine).forEach(time => {
+
+    if (routine[time].length === 0) return;
+
+    const block = document.createElement("div");
+
+    block.innerHTML = `<h4>${time}</h4>`;
+
+    routine[time].forEach(item => {
+
+      block.innerHTML += `
+        <label>
+          <input type="checkbox"
+                 class="att-check"
+                 data-time="${time}"
+                 data-product="${item}">
+          ${item}
+        </label><br>
+      `;
+
+    });
+
+    attendanceList.appendChild(block);
+
+  });
+
+}
+
+/* ===============================
+   STEP 3 — LOAD SAVED ATTENDANCE
+================================ */
+
+function loadSavedAttendance() {
+
+  fetch(`http://localhost:5000/attendance?userId=${user._id}`)
+    .then(res => res.json())
+    .then(data => {
+
+      data.forEach(item => {
+
+        if (item.date !== today) return;
+
+        const selector = `[data-product="${item.product}"][data-time="${item.time}"]`;
+
+        const checkbox = document.querySelector(selector);
+
+        if (checkbox) {
+          checkbox.checked = item.completed;
+        }
+
       });
 
-      attendanceList.appendChild(block);
-    });
-  }
-
-  renderAttendance();
-
-  saveAttendanceBtn.addEventListener("click", function () {
-
-    const result = {};
-
-    ["Morning", "Afternoon", "Night"].forEach(time => {
-      const checks = document.querySelectorAll(
-        `.att-check[data-time="${time}"]`
-      );
-
-      result[time] =
-        checks.length > 0 && [...checks].every(cb => cb.checked);
     });
 
-    attendance[today] = result;
+}
 
-    localStorage.setItem(
-      "attendance",
-      JSON.stringify(attendance)
-    );
+/* ===============================
+   STEP 4 — SAVE ATTENDANCE
+================================ */
 
-    alert("Attendance saved for today ✅");
+saveAttendanceBtn.addEventListener("click", function () {
+
+  const records = [];
+
+  document.querySelectorAll(".att-check").forEach(cb => {
+
+    records.push({
+      product: cb.dataset.product,
+      time: cb.dataset.time,
+      date: today,
+      completed: cb.checked,
+      userId: user._id
+    });
+
   });
+
+  fetch("http://localhost:5000/attendance", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(records)
+  })
+    .then(res => res.json())
+    .then(() => {
+      alert("Attendance saved for today ✅");
+    });
+
+});
+
 </script>
 </body>
+
 </html>

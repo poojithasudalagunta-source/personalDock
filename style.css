@@ -537,3 +537,20 @@ body {
   background: #fee2e2;
   color: #b91c1c;
 }
+#clockCanvas {
+  display: block;
+  margin: 40px auto;
+
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  padding: 20px;
+
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  border: 4px solid #8b8bf1;
+
+  transition: transform 0.3s ease;
+}
+
+#clockCanvas:hover {
+  transform: scale(1.05);
+}

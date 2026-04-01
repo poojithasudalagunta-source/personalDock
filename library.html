@@ -1,181 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Digital Library</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
-<div class="app">
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="logo">
-      <span class="logo-badge">pd</span>
-      <span class="logo-text">personalDock</span>
-    </div>
+  <div class="app">
 
-    <nav class="menu">
-  <a href="home.html">
-    <img src="assets/overview.png" alt="home">
-    <span>home</span>
-  </a>
-
-  <a href="library.html"  class="active">
-    <img src="assets/library.png" alt="Library">
-    <span>Library</span>
-  </a>
-
-  <a href="tracker.html">
-    <img src="assets/tracker.png" alt="Tracker">
-    <span>Tracker</span>
-  </a>
-
-  <a href="planner.html">
-    <img src="assets/planner.png" alt="Planner">
-    <span>Planner</span>
-  </a>
-
-  <a href="assistant.html">
-    <img src="assets/bot.png" alt="Bot">
-    <span>Bot</span>
-  </a>
-</nav>
-    <div class="user">
-       <div class="avatar">  </div>   
-       <div>
-        <strong>User Account</strong><br>
-<small id="userName">Loading...</small>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="logo">
+        <span class="logo-badge">pd</span>
+        <span class="logo-text">personalDock</span>
       </div>
 
-      
-</div>
+      <nav class="menu">
+        <a href="home.html">
+          <img src="assets/overview.png">
+          <span>home</span>
+        </a>
 
+        <a href="library.html" class="active">
+          <img src="assets/library.png">
+          <span>Library</span>
+        </a>
 
-</aside>
-<main class="main content">
-<header class="header">
-<div>
-<h1>Digital Library</h1>
-<p>Manage your collection of PDFs and documents.</p>
-</div>
-<button class="primary-btn" id="addDocBtn">+ Add Document</button>
-      <input type="file" id="pdfUpload" accept="application/pdf" hidden />
-</header>
-<div class="search-box">
-  <input
-    type="text"
-    id="searchInput"
-    placeholder="Search documents by name..."
-  />
-</div>
+        <a href="tracker.html">
+          <img src="assets/tracker.png">
+          <span>Tracker</span>
+        </a>
 
-<section class="grid" id="libraryGrid">
+        <a href="planner.html">
+          <img src="assets/planner.png">
+          <span>Planner</span>
+        </a>
 
-  <!-- Existing cards stay as they are -->
+        <a href="assistant.html">
+          <img src="assets/bot.png">
+          <span>Bot</span>
+        </a>
+      </nav>
 
-</section>
-
-
-</main>
-
-</div>
-
-<script>
-  /* ===============================
-     ELEMENT REFERENCES
-     =============================== */
-
-  const addDocBtn = document.getElementById("addDocBtn");
-  const pdfUpload = document.getElementById("pdfUpload");
-  const libraryGrid = document.getElementById("libraryGrid");
-  const searchInput = document.getElementById("searchInput");
-
-  /* ===============================
-     DATA STORAGE (OBJECTS)
-     =============================== */
-
-  const documents = [];   // stores uploaded document objects
-
-  /* ===============================
-     OPEN FILE PICKER
-     =============================== */
-
-  addDocBtn.addEventListener("click", function () {
-    pdfUpload.click();
-  });
-
-  /* ===============================
-     HANDLE PDF UPLOAD
-     =============================== */
-
-  pdfUpload.addEventListener("change", function () {
-    const file = pdfUpload.files[0];
-    if (!file) return;
-
-    const fileURL = URL.createObjectURL(file);
-
-    // create document object
-    const documentObj = {
-      name: file.name,
-      size: (file.size / 1024 / 1024).toFixed(2) + " MB",
-      url: fileURL
-    };
-
-    documents.push(documentObj);
-    displayDocument(documentObj);
-
-    pdfUpload.value = "";
-  });
-
-  /* ===============================
-     DISPLAY DOCUMENT CARD
-     =============================== */
-
-  function displayDocument(doc) {
-    const card = document.createElement("div");
-    card.className = "card";
-
-    card.innerHTML = `
-      <span class="tag">Personal</span>
-      <div class="file-icon"></div>
-      <h3>${doc.name}</h3>
-      <p>Uploaded PDF</p>
-      <div class="card-footer">
-        <span>PDF • ${doc.size}</span>
-        <a href="${doc.url}" target="_blank">View</a>
+      <div class="user">
+        <div class="avatar"></div>
+        <div>
+          <strong>User Account</strong><br>
+          <small id="userName">Loading...</small>
+        </div>
       </div>
-    `;
+    </aside>
 
-    libraryGrid.appendChild(card);
-  }
+    <!-- MAIN -->
+    <main class="main content">
 
-  /* ===============================
-     SEARCH FUNCTIONALITY
-     =============================== */
+      <header class="header">
+        <div>
+          <h1>Digital Library</h1>
+          <p>Manage your collection of PDFs and documents.</p>
+        </div>
 
-  searchInput.addEventListener("keyup", function () {
-    const searchText = searchInput.value.toLowerCase();
-    const cards = libraryGrid.getElementsByClassName("card");
+        <button class="primary-btn" id="addDocBtn">+ Add Document</button>
+        <input type="file" id="pdfUpload" accept="application/pdf" hidden />
+      </header>
 
-    for (let i = 0; i < cards.length; i++) {
-      const title = cards[i]
-        .getElementsByTagName("h3")[0]
-        .innerText.toLowerCase();
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search documents..." />
+      </div>
 
-      if (title.indexOf(searchText) !== -1) {
-        cards[i].style.display = "block";
-      } else {
-        cards[i].style.display = "none";
-      }
+      <section class="grid" id="libraryGrid"></section>
+
+    </main>
+  </div>
+
+  <script>
+
+    const addDocBtn = document.getElementById("addDocBtn");
+    const pdfUpload = document.getElementById("pdfUpload");
+    const libraryGrid = document.getElementById("libraryGrid");
+    const searchInput = document.getElementById("searchInput");
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    /* ===============================
+       OPEN FILE PICKER
+    ================================ */
+    addDocBtn.onclick = () => pdfUpload.click();
+
+    /* ===============================
+       LOAD DOCUMENTS
+    ================================ */
+    function loadDocuments() {
+
+      fetch(`http://localhost:5000/documents?userId=${user._id}`)
+        .then(res => res.json())
+        .then(data => {
+
+          libraryGrid.innerHTML = "";
+
+          data.forEach(doc => displayDocument(doc));
+
+        })
+        .catch(err => console.error("Error loading docs:", err));
     }
-  });
-  const user = JSON.parse(localStorage.getItem("currentUser"));
-  if (user && user.name) {
-    document.getElementById("userName").innerText = user.name;
-  }
 
-</script>
+    loadDocuments();
 
+    /* ===============================
+       UPLOAD PDF
+    ================================ */
+    pdfUpload.addEventListener("change", () => {
+
+      const file = pdfUpload.files[0];
+      if (!file) return;
+
+      const fileURL = URL.createObjectURL(file);
+
+     const documentObj = {
+  name: file.name,
+  size: (file.size / 1024 / 1024).toFixed(2) + " MB",
+  url: fileURL,
+  userId: user._id   // ⭐ ADD THIS
+};
+
+      fetch("http://localhost:5000/documents", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(documentObj)
+      })
+      .then(res => res.json())
+      .then(() => {
+        loadDocuments(); // ✅ reload from DB
+      })
+      .catch(err => console.error("Upload error:", err));
+
+      pdfUpload.value = "";
+    });
+
+    /* ===============================
+       DISPLAY CARD
+    ================================ */
+    function displayDocument(doc) {
+
+      const card = document.createElement("div");
+      card.className = "card";
+
+      card.innerHTML = `
+        <span class="tag">Personal</span>
+        <div class="file-icon"></div>
+        <h3>${doc.name}</h3>
+        <p>Uploaded PDF</p>
+        <div class="card-footer">
+          <span>PDF • ${doc.size}</span>
+          <a href="${doc.url}" target="_blank">View</a>
+        </div>
+      `;
+
+      libraryGrid.appendChild(card);
+    }
+
+    /* ===============================
+       SEARCH
+    ================================ */
+    searchInput.addEventListener("keyup", () => {
+
+      const searchText = searchInput.value.toLowerCase();
+      const cards = document.querySelectorAll(".card");
+
+      cards.forEach(card => {
+        const title = card.querySelector("h3").innerText.toLowerCase();
+        card.style.display = title.includes(searchText) ? "block" : "none";
+      });
+
+    });
+
+    /* ===============================
+       USER NAME
+    ================================ */
+    const userData = localStorage.getItem("currentUser");
+
+    if (userData) {
+      const user = JSON.parse(userData);
+      document.getElementById("userName").innerText =
+        user.name || user.username || "User";
+    }
+
+  </script>
 
 </body>
 </html>
