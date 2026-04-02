@@ -73,15 +73,15 @@ const Knowledge = mongoose.model("Knowledge", {
    AUTH ROUTES
 =============================== */
 
-// SIGNUP
-  app.post("/signup", async (req, res) => {
+// 📝 SIGNUP
+app.post("/signup", async (req, res) => {
   try {
     const { name, username, password } = req.body;
 
     const existingUser = await User.findOne({ username });
 
     if (existingUser) {
-      return res.json({ success: false, message: "User already exists" });
+      return res.json({ success: false });
     }
 
     const user = new User({ name, username, password });
@@ -94,7 +94,8 @@ const Knowledge = mongoose.model("Knowledge", {
     res.status(500).json({ success: false });
   }
 });
-// LOGIN
+
+// 🔐 LOGIN
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
