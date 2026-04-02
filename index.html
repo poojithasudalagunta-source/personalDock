@@ -94,26 +94,24 @@
 
   <script>
 
-    const title = document.getElementById("title");
-    const subtitle = document.getElementById("subtitle");
-    const authBtn = document.getElementById("authBtn");
-    const switchMode = document.getElementById("switchMode");
+const title = document.getElementById("title");
+const subtitle = document.getElementById("subtitle");
+const authBtn = document.getElementById("authBtn");
+const switchMode = document.getElementById("switchMode");
 
-    const nameInput = document.getElementById("name");
-    const usernameInput = document.getElementById("username");
-    const passwordInput = document.getElementById("password");
+const nameInput = document.getElementById("name");
+const usernameInput = document.getElementById("username");
+const passwordInput = document.getElementById("password");
 
-    let isLogin = true;
+let isLogin = true;
 
-    /* ===============================
-       SWITCH LOGIN / SIGNUP
-    ================================ */
+/* ===============================
+   SWITCH LOGIN / SIGNUP
+================================ */
 
-    switchMode.onclick = () => {
+switchMode.onclick = () => {
 
   isLogin = !isLogin;
-
-  console.log("Mode switched:", isLogin ? "Login" : "Signup");
 
   if (isLogin) {
     title.innerText = "Login";
@@ -130,15 +128,15 @@
 };
 
 
-    /* ===============================
-       AUTH BUTTON
-    ================================ */
+/* ===============================
+   AUTH BUTTON
+================================ */
 
-    authBtn.onclick = () => {
+authBtn.onclick = () => {
 
-  console.log("isLogin:", isLogin);
+  console.log("BUTTON CLICKED ✅");
 
-  if (isLogin === true) {
+  if (isLogin) {
 
     // LOGIN
     fetch("http://localhost:5000/login", {
@@ -197,18 +195,16 @@
 
       localStorage.removeItem("currentUser");
 
+    })
+    .catch(err => {
+      console.error("SIGNUP ERROR:", err);
     });
 
   }
 
 };
-      /* ===============================
-         LOGIN
-      ================================ */
 
-
-
-  </script>
+</script>
 </body>
 
 </html>
