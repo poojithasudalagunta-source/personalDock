@@ -1,5 +1,4 @@
 node_modules/
-personalDock-backend/
-package.json
+
+
 package-lock.json
-server.js
