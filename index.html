@@ -139,7 +139,7 @@ authBtn.onclick = () => {
   if (isLogin) {
 
     // LOGIN
-    fetch("http://localhost:5000/login", {
+    fetch("https://personaldock.onrender.com/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -170,7 +170,7 @@ authBtn.onclick = () => {
   } else {
 
     // SIGNUP
-    fetch("http://localhost:5000/signup", {
+    fetch("https://personaldock.onrender.com/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

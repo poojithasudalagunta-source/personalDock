@@ -188,7 +188,7 @@
     ================================ */
 
     function loadKnowledge() {
-      fetch(`http://localhost:5000/knowledge?userId=${user._id}`)
+      fetch(`https://personaldock.onrender.com/knowledge?userId=${user._id}`)
         .then(res => res.json())
         .then(data => {
           console.log("Knowledge loaded:", data);
@@ -241,7 +241,7 @@
 
           if (!updated) return;
 
-          fetch("http://localhost:5000/knowledge/edit", {
+          fetch("https://personaldock.onrender.com/knowledge/edit", {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
@@ -260,7 +260,7 @@
 
         div.querySelector(".delete").onclick = () => {
 
-          fetch("http://localhost:5000/knowledge/delete", {
+          fetch("https://personaldock.onrender.com/knowledge/delete", {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
@@ -306,7 +306,7 @@
 
       if (!infoText.value.trim()) return;
 
-      fetch("http://localhost:5000/knowledge", {
+      fetch("https://personaldock.onrender.com/knowledge", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

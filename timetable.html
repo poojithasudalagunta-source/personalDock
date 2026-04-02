@@ -124,7 +124,7 @@
     Night: []
   };
 
-  fetch(`http://localhost:5000/planner?userId=${user._id}`)
+  fetch(`https://personaldock.onrender.com/planner?userId=${user._id}`)
     .then(res => res.json())
     .then(data => {
 
@@ -152,7 +152,7 @@
 
       const user = JSON.parse(localStorage.getItem("currentUser"));
 
-fetch("http://localhost:5000/planner", {
+fetch("https://personaldock.onrender.com/planner", {
   method: "POST",
   headers: {
     "Content-Type": "application/json"
@@ -214,7 +214,7 @@ fetch("http://localhost:5000/planner", {
     return;
   }
 
-  fetch("http://localhost:5000/planner", {   // ⭐ CORRECT API
+  fetch("https://personaldock.onrender.com/planner", {   // ⭐ CORRECT API
     method: "POST",
     headers: {
       "Content-Type": "application/json"

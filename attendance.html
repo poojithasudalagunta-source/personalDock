@@ -79,7 +79,7 @@ let routine = {
    STEP 1 — LOAD ROUTINE FROM PLANNER
 ================================ */
 
-fetch(`http://localhost:5000/planner?userId=${user._id}`)
+fetch(`https://personaldock.onrender.com/planner?userId=${user._id}`)
   .then(res => res.json())
   .then(data => {
 
@@ -135,7 +135,7 @@ function renderAttendance() {
 
 function loadSavedAttendance() {
 
-  fetch(`http://localhost:5000/attendance?userId=${user._id}`)
+  fetch(`https://personaldock.onrender.com?userId=${user._id}`)
     .then(res => res.json())
     .then(data => {
 
@@ -177,7 +177,7 @@ saveAttendanceBtn.addEventListener("click", function () {
 
   });
 
-  fetch("http://localhost:5000/attendance", {
+  fetch("https://personaldock.onrender.com/attendance", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"

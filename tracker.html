@@ -178,7 +178,7 @@
 
         div.querySelector(".delete-note").onclick = () => {
 
-          fetch("http://localhost:5000/notes/delete", {
+          fetch("https://personaldock.onrender.com/notes/delete", {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
@@ -217,7 +217,7 @@
         userId: user._id
       };
 
-      fetch("http://localhost:5000/notes", {
+      fetch("https://personaldock.onrender.com/notes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

@@ -92,7 +92,7 @@
     ================================ */
     function loadDocuments() {
 
-      fetch(`http://localhost:5000/documents?userId=${user._id}`)
+      fetch("https://personaldock.onrender.com/documents?userId=${user._id}")
         .then(res => res.json())
         .then(data => {
 
@@ -123,7 +123,7 @@
   userId: user._id   // ⭐ ADD THIS
 };
 
-      fetch("http://localhost:5000/documents", {
+      fetch("https://personaldock.onrender.com/documents", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
