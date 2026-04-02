@@ -74,17 +74,17 @@ const Knowledge = mongoose.model("Knowledge", {
 =============================== */
 
 // SIGNUP
-app.post("/signup", async (req, res) => {
-  const { name, username, password } = req.body;
-
-  const existing = await User.findOne({ username });
-  if (existing) return res.json({ success: false });
-
-  const user = new User({ name, username, password });
-  await user.save();
-
-  res.json({ success: true });
-});
+  fetch("https://personaldock.onrender.com/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: nameInput.value,
+        username: usernameInput.value,
+        password: passwordInput.value
+      })
+    })
 
 // LOGIN
 app.post("/login", async (req, res) => {
