@@ -9,7 +9,7 @@ app.use(cors());
 /* ===============================
    CONNECT TO MONGODB
 =============================== */
-mongoose.connect("mongodb+srv://poojithasudalagunta_db_user:V6KeyB69JND6sikh@cluster0.dnlsfui.mongodb.net/personaldock")
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.log(err));
 
@@ -74,18 +74,26 @@ const Knowledge = mongoose.model("Knowledge", {
 =============================== */
 
 // SIGNUP
-  fetch("https://personaldock.onrender.com/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        name: nameInput.value,
-        username: usernameInput.value,
-        password: passwordInput.value
-      })
-    })
+  app.post("/signup", async (req, res) => {
+  try {
+    const { name, username, password } = req.body;
 
+    const existingUser = await User.findOne({ username });
+
+    if (existingUser) {
+      return res.json({ success: false, message: "User already exists" });
+    }
+
+    const user = new User({ name, username, password });
+    await user.save();
+
+    res.json({ success: true, user });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false });
+  }
+});
 // LOGIN
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
