@@ -134,11 +134,9 @@ switchMode.onclick = () => {
 
 authBtn.onclick = () => {
 
-  console.log("BUTTON CLICKED ✅");
-
   if (isLogin) {
 
-    // LOGIN
+    // 🔐 LOGIN
     fetch("https://personaldock.onrender.com/login", {
       method: "POST",
       headers: {
@@ -165,11 +163,12 @@ authBtn.onclick = () => {
     })
     .catch(err => {
       console.error("LOGIN ERROR:", err);
+      alert("Server error ❌");
     });
 
   } else {
 
-    // SIGNUP
+    // 📝 SIGNUP
     fetch("https://personaldock.onrender.com/signup", {
       method: "POST",
       headers: {
@@ -192,8 +191,6 @@ authBtn.onclick = () => {
       }
 
       alert("Signup successful ✅ Please login");
-
-      localStorage.removeItem("currentUser");
 
     })
     .catch(err => {
