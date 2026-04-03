@@ -135,7 +135,7 @@ function renderAttendance() {
 
 function loadSavedAttendance() {
 
-  fetch(`https://personaldock.onrender.com?userId=${user._id}`)
+  fetch(`https://personaldock.onrender.com/attendance?userId=${user._id}`)
     .then(res => res.json())
     .then(data => {
 

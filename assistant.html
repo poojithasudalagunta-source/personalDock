@@ -119,7 +119,7 @@
         <div class="avatar"></div>
         <div>
           <strong>User Account</strong><br>
-          <small>user@example.com</small>
+          <small id="userName">Loading...</small>
         </div>
       </div>
     </aside>
@@ -181,6 +181,9 @@
     const userInput = document.getElementById("userInput");
     const sendBtn = document.getElementById("sendBtn");
     const user = JSON.parse(localStorage.getItem("currentUser"));
+    if (user && user.name) {
+  document.getElementById("userName").innerText = user.name;
+}
     let knowledgeBase = [];
 
     /* ===============================

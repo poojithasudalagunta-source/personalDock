@@ -92,26 +92,22 @@
   const afternoonList = document.getElementById("afternoonList");
   const nightList = document.getElementById("nightList");
   const user = JSON.parse(localStorage.getItem("currentUser"));
+
   /* ===============================
      LOAD PRODUCTS FROM DATABASE
   ================================ */
 
-  fetch(`http://localhost:5000/products?userId=${user._id}`)
+  fetch(`https://personaldock.onrender.com/products?userId=${user._id}`)
     .then(res => res.json())
     .then(products => {
-      const select = document.getElementById("productSelect");
-
-      select.innerHTML = "";
+      productSelect.innerHTML = "";
 
       products.forEach(product => {
         const option = document.createElement("option");
-
         option.value = product.name;
         option.textContent = product.name + " (" + product.category + ")";
-
         productSelect.appendChild(option);
       });
-
     });
 
   /* ===============================
@@ -127,11 +123,9 @@
   fetch(`https://personaldock.onrender.com/planner?userId=${user._id}`)
     .then(res => res.json())
     .then(data => {
-
       data.forEach(item => {
         routine[item.time].push(item.product);
       });
-
       renderRoutine();
     });
 
@@ -144,36 +138,31 @@
     const li = document.createElement("li");
 
     li.innerHTML = `
-    ${item}
-    <button class="delete-btn">❌</button>
-  `;
+      ${item}
+      <button class="delete-btn">❌</button>
+    `;
 
     li.querySelector(".delete-btn").addEventListener("click", function () {
 
-      const user = JSON.parse(localStorage.getItem("currentUser"));
+      fetch("https://personaldock.onrender.com/planner/delete", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          product: item,
+          time: time,
+          userId: user._id
+        })
+      })
+      .then(() => {
+        routine[time] = routine[time].filter(p => p !== item);
+        renderRoutine();
+      });
 
-fetch("https://personaldock.onrender.com/planner", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    product: selectedProduct,
-    time: selectedTime,
-    userId: user._id   // ⭐ VERY IMPORTANT
-  })
-})
-.then(res => res.json())
-.then(data => {
-  console.log("Saved planner:", data); // DEBUG
-});
-
-      routine[time] = routine[time].filter(p => p !== item);
-
-      renderRoutine();
     });
 
-    return li;
+    return li;   // ⭐ THIS WAS MISSING
   }
 
   /* ===============================
@@ -206,40 +195,36 @@ fetch("https://personaldock.onrender.com/planner", {
 
   assignBtn.addEventListener("click", function () {
 
-  const selectedProduct = productSelect.value;
-  const selectedTime = timeSelect.value;
+    const selectedProduct = productSelect.value;
+    const selectedTime = timeSelect.value;
 
-  if (selectedProduct === "Select Product") {
-    alert("Please select a product");
-    return;
-  }
+    if (selectedProduct === "Select Product") {
+      alert("Please select a product");
+      return;
+    }
 
-  fetch("https://personaldock.onrender.com/planner", {   // ⭐ CORRECT API
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      product: selectedProduct,
-      time: selectedTime,
-      userId: user._id   // ⭐ VERY IMPORTANT
+    fetch("https://personaldock.onrender.com/planner", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        product: selectedProduct,
+        time: selectedTime,
+        userId: user._id
+      })
     })
-  })
-  .then(res => res.json())
-  .then(() => {
-
-    routine[selectedTime].push(selectedProduct);
-    renderRoutine();
+    .then(res => res.json())
+    .then(() => {
+      routine[selectedTime].push(selectedProduct);
+      renderRoutine();
+    });
 
   });
-
-});
 
   /* ===============================
      LOAD USER
   ================================ */
-
-  
 
   if (user && user.name) {
     document.getElementById("userName").innerText = user.name;

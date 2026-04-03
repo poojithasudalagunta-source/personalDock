@@ -91,10 +91,12 @@
        LOAD DOCUMENTS
     ================================ */
     function loadDocuments() {
-
+      console.log("USER:", user);
       fetch(`https://personaldock.onrender.com/documents?userId=${user._id}`)
+
         .then(res => res.json())
         .then(data => {
+          console.log("DOCUMENTS:", data);
 
           libraryGrid.innerHTML = "";
 

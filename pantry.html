@@ -106,7 +106,7 @@
 
     function loadProducts() {
 
-      fetch(`http://localhost:5000/products?userId=${user._id}`)
+      fetch(`https://personaldock.onrender.com/products?userId=${user._id}`)
         .then(res => res.json())
         .then(products => {
 
@@ -119,6 +119,7 @@
 
             const expiryDate = new Date(product.expiry);
             const isExpired = expiryDate < today;
+            const daysLeft = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
 
             const row = document.createElement("tr");
 
@@ -128,9 +129,13 @@
           <td>${product.expiry}</td>
           <td>Daily</td>
           <td>
-            <span class="status ${isExpired ? "expired" : "active"}">
-              ${isExpired ? "Expired" : "Active"}
-            </span>
+             ${
+              daysLeft < 0
+                ? "Expired ❌"
+                : daysLeft <= 5
+                ? "Expiring soon ⚠️"
+                : "Good ✅"
+             }
           </td>
           <td>
             <button class="delete-btn">🗑</button>
@@ -139,7 +144,7 @@
 
             row.querySelector(".delete-btn").addEventListener("click", function () {
 
-              fetch("http://localhost:5000/products/delete", {
+              fetch("https://personaldock.onrender.com/products/delete", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"

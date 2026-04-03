@@ -63,6 +63,7 @@ const Product = mongoose.model("Product", {
 const Planner = mongoose.model("Planner", {
   product: String,
   time: String,
+  completed: { type: Boolean, default: false }, // ⭐ ADD
   userId: String
 });
 
@@ -232,8 +233,7 @@ app.get("/planner", async (req, res) => {
 
   const userId = req.query.userId;
 
-  const data = await Planner.find({ userId });
-
+  const data = await Planner.find({ userId }).sort({ completed: 1 });
   res.json(data);
 
 });
@@ -252,6 +252,7 @@ app.post("/planner/delete", async (req, res) => {
   });
   res.json({ success: true });
 });
+
 
 /* ===============================
    ATTENDANCE
@@ -274,7 +275,18 @@ app.post("/attendance", async (req, res) => {
     userId: r.userId   // ensure userId exists
   }));
 
-  await Attendance.insertMany(records);
+  for (const record of records) {
+  await Attendance.updateOne(
+    {
+      product: record.product,
+      time: record.time,
+      date: record.date,
+      userId: record.userId
+    },
+    record,
+    { upsert: true }
+  );
+}
 
   res.json({ success: true });
 
