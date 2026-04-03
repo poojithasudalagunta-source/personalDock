@@ -28,7 +28,19 @@ const User = mongoose.model("User", {
 const Note = mongoose.model("Note", {
   text: String,
   color: String,
-  userId: String   // ⭐ ADD THIS
+  userId: String,
+  pinned: { type: Boolean, default: false }   // ⭐ ADD THIS
+});
+
+app.post("/notes/pin", async (req, res) => {
+  const { id, pinned, userId } = req.body;
+
+  await Note.updateOne(
+    { _id: id, userId },
+    { pinned }
+  );
+
+  res.json({ success: true });
 });
 
 // DOCUMENTS
@@ -118,7 +130,7 @@ app.get("/notes", async (req, res) => {
 
   const userId = req.query.userId;
 
-  const notes = await Note.find({ userId });
+  const notes = await Note.find({ userId }).sort({ pinned: -1 });
 
   res.json(notes);
 });
@@ -146,6 +158,23 @@ app.post("/notes/delete", async (req, res) => {
 
   res.json({ success: true });
 
+});
+
+app.post("/notes/edit", async (req, res) => {
+  try {
+    const { id, text, color, userId } = req.body;
+
+    await Note.updateOne(
+      { _id: id, userId },
+      { text, color }
+    );
+
+    res.json({ success: true });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false });
+  }
 });
 
 /* ===============================

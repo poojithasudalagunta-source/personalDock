@@ -146,7 +146,7 @@
 
     function loadNotes() {
 
-        fetch(`http://localhost:5000/notes?userId=${user._id}`)
+        fetch(`https://personaldock.onrender.com/notes?userId=${user._id}`)
         .then(res => res.json())
         .then(data => {
           notes = data;
@@ -172,9 +172,16 @@
         div.className = `sticky ${note.color}`;
 
         div.innerHTML = `
-      <span>${note.text}</span>
-      <button class="delete-note">✖</button>
-    `;
+  <span>${note.text}</span>
+
+  <button onclick="editNote('${note._id}', '${note.text}', '${note.color}')">✏️</button>
+
+  <button onclick="togglePin('${note._id}', ${note.pinned})">
+    ${note.pinned ? "📌" : "📍"}
+  </button>
+
+  <button class="delete-note">✖</button>
+`;
 
         div.querySelector(".delete-note").onclick = () => {
 
@@ -240,6 +247,40 @@
     if (user && user.name) {
       document.getElementById("userName").innerText = user.name;
     }
+
+    function editNote(id, oldText, oldColor) {
+  const newText = prompt("Edit note:", oldText);
+  if (!newText) return;
+
+  fetch("https://personaldock.onrender.com/notes/edit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      id,
+      text: newText,
+      color: oldColor,
+      userId: user._id
+    })
+  })
+  .then(() => loadNotes());
+}
+
+function togglePin(id, current) {
+  fetch("https://personaldock.onrender.com/notes/pin", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      id,
+      pinned: !current,
+      userId: user._id
+    })
+  })
+  .then(() => loadNotes());
+}
 
   </script>
 
